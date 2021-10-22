@@ -4,6 +4,7 @@ package betaversion.cp2406assignment_beta;
  * CP2406 Assignment - Samuel Healion
  * Basic class representing a single months' rainfall data.
  * Includes setter/getter methods for each variable
+ * Extra method added to set all the variables at once
  */
 public class MonthDataSet {
 
@@ -12,6 +13,14 @@ public class MonthDataSet {
         private double max;
         private int month;
         private int year;
+
+        public void setRainfallData (double newTotal, double newMin, double newMax, int newMonth, int newYear) {
+                total = newTotal;
+                min = newMin;
+                max = newMax;
+                month = newMonth;
+                year = newYear;
+        }
 
         public String printTotal() {
                 return (month + "/" + year + " had " + total + " millimeters of rain");
