@@ -1,5 +1,7 @@
 package betaversion.cp2406assignment_beta;
 
+import java.io.IOException;
+
 public class ClassTester {
     public static void main(String[] args) {
 
@@ -31,5 +33,18 @@ public class ClassTester {
         System.out.println("The most rainfall in a month was " + newRainfallData.getMaxTotalRainfall() + " millimeters");
         System.out.println("The least rainfall in a single day was " + newRainfallData.getMinRainfall() + " millimeters");
         System.out.println("The most rainfall in a single day was " + newRainfallData.getMaxRainfall() + " millimeters");
+
+
+        // Tests for RainfallAnalyser class
+        RainfallAnalyser analysedDataSet = new RainfallAnalyser();
+        RainfallDataSet testDataSet = new RainfallDataSet();
+        try {
+            testDataSet = analysedDataSet.analyseDataSet("src/main/resources/betaversion/cp2406assignment_beta/MountSheridanStationCNS.csv");
+            System.out.println("It worked");
+        } catch (IOException err) {
+            System.out.println("Something went wrong");
+            System.out.println(err.getMessage());
+        }
+        System.out.println(testDataSet);
     }
 }
