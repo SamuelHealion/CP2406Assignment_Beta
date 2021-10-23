@@ -33,7 +33,7 @@ public class ClassTester {
         RainfallAnalyser analysedRainfallData = new RainfallAnalyser();
         RainfallData testRainfallData = new RainfallData();
         try {
-            testRainfallData = analysedRainfallData.analyseDataSet("src/main/resources/betaversion/cp2406assignment_beta/MountSheridanStationCNS.csv");
+            testRainfallData = analysedRainfallData.analyseDataSet("src/main/resources/betaversion/cp2406assignment_beta/IDCJAC0009_031205_1800_Data.csv");
             System.out.println("Successfully loaded the data");
         } catch (IOException err) {
             System.out.println("Something went wrong");
@@ -41,10 +41,13 @@ public class ClassTester {
         } catch (NumberFormatException err) {
             System.out.println("There was an issue in the file data");
             System.out.println(err.getMessage());
+        } catch (IllegalArgumentException err) {
+            System.out.println("There was an issue parsing the rainfall data");
+            System.out.println(err.getMessage());
         }
 
-        for (MonthRainfallData monthData: testRainfallData.getRainfallData())
-            System.out.println(monthData.getDate() + " had " + monthData.getTotal() + " millimeters of rain");
+//        for (MonthRainfallData monthData: testRainfallData.getRainfallData())
+//            System.out.println(monthData.getDate() + " had " + monthData.getTotal() + " millimeters of rain");
 
         System.out.println(testRainfallData.getDateRange());
         System.out.println("There are " + testRainfallData.getNumberOfMonths() + " months of data");
