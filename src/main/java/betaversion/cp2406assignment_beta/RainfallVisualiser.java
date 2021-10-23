@@ -10,6 +10,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -31,39 +32,56 @@ public class RainfallVisualiser extends Application {
         g.strokeLine(border_width, border_width, border_width, height - border_width);
         g.strokeLine(border_width, height - border_width, width - border_width, height - border_width);
 
-        TextIO.getln(); // Remove the first line
+//        TextIO.getln(); // Remove the first line
+//
+//        ArrayList<Double> allMonthlyTotals = new ArrayList<>();
+//
+//        double maxMonthlyTotal = Double.NEGATIVE_INFINITY;
+//        int firstYear = 2050;
+//        int lastYear = 0;
+//        // Read the file first and create an array of the monthly totals
+//        while (!TextIO.eof()) {
+//            String[] line = TextIO.getln().trim().strip().split(",");
+//            double monthlyTotal = Double.parseDouble(line[2]);
+//            allMonthlyTotals.add(monthlyTotal);
+//            if (monthlyTotal > maxMonthlyTotal)
+//                maxMonthlyTotal = monthlyTotal;
+//
+//            int year = Integer.parseInt(line[0]);
+//            if (year < firstYear)
+//                firstYear = year;
+//            else if (year > lastYear)
+//                lastYear = year;
+//        }
 
-        ArrayList<Double> allMonthlyTotals = new ArrayList<>();
-
-        double maxMonthlyTotal = Double.NEGATIVE_INFINITY;
-        int firstYear = 2050;
-        int lastYear = 0;
-        // Read the file first and create an array of the monthly totals
-        while (!TextIO.eof()) {
-            String[] line = TextIO.getln().trim().strip().split(",");
-            double monthlyTotal = Double.parseDouble(line[2]);
-            allMonthlyTotals.add(monthlyTotal);
-            if (monthlyTotal > maxMonthlyTotal)
-                maxMonthlyTotal = monthlyTotal;
-
-            int year = Integer.parseInt(line[0]);
-            if (year < firstYear)
-                firstYear = year;
-            else if (year > lastYear)
-                lastYear = year;
+        RainfallAnalyser analysedRainfallData = new RainfallAnalyser();
+        RainfallData rainfallData = new RainfallData();
+        try {
+            rainfallData = analysedRainfallData.analyseDataSet("src/main/resources/betaversion/cp2406assignment_beta/IDCJAC0009_031205_1800_Data.csv");
+            System.out.println("Successfully loaded the data");
+        } catch (IOException err) {
+            System.out.println("Something went wrong");
+            System.out.println(err.getMessage());
+        } catch (NumberFormatException err) {
+            System.out.println("There was an issue in the file data");
+            System.out.println(err.getMessage());
+        } catch (IllegalArgumentException err) {
+            System.out.println("There was an issue parsing the rainfall data");
+            System.out.println(err.getMessage());
         }
 
         double xAxisLength = width - 2 * border_width;
         double yAxisLength = height - 2 * border_width;
         double currentXPos = border_width;
-        double barWidth = xAxisLength / allMonthlyTotals.size();
+        double barWidth = xAxisLength / rainfallData.getNumberOfMonths();
+        double maxMonthlyTotal = rainfallData.getMaxTotalRainfall();
 
         g.setFill(Color.BLUE);
         g.setLineWidth(0.5);
 
-        for (Double monthlyTotal : allMonthlyTotals) {
+        for (MonthRainfallData monthData : rainfallData.getRainfallData()) {
             // Get the height of the column relative to the maximum height
-            double columnHeight = (monthlyTotal / maxMonthlyTotal) * yAxisLength;
+            double columnHeight = (monthData.getTotal() / maxMonthlyTotal) * yAxisLength;
 
             // Draw the rectangle representing the rainfall and draw a black outline
             g.fillRect(currentXPos, height - border_width - columnHeight, barWidth, columnHeight);
@@ -75,7 +93,7 @@ public class RainfallVisualiser extends Application {
         // Add a title and axis names
         g.setFill(Color.BLACK);
         g.setFont(Font.font(24));
-        g.fillText("Rainfall: " + firstYear + " to " + lastYear, width/2.5, border_width);
+        g.fillText("Analysed Rainfall", width/2.5, border_width);
 
         g.setFont(Font.font(15));
         g.fillText("Months", width/2.0, height-5);
