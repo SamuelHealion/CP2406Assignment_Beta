@@ -1,6 +1,5 @@
 package betaversion.cp2406assignment_beta;
 
-import alphaversion.cp2406assignment_alpha.TextIO;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -11,7 +10,6 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 /**
  * This file can be used to draw a chart that effectively represents rainfall data.  Just fill in
@@ -32,27 +30,6 @@ public class RainfallVisualiser extends Application {
         g.strokeLine(border_width, border_width, border_width, height - border_width);
         g.strokeLine(border_width, height - border_width, width - border_width, height - border_width);
 
-//        TextIO.getln(); // Remove the first line
-//
-//        ArrayList<Double> allMonthlyTotals = new ArrayList<>();
-//
-//        double maxMonthlyTotal = Double.NEGATIVE_INFINITY;
-//        int firstYear = 2050;
-//        int lastYear = 0;
-//        // Read the file first and create an array of the monthly totals
-//        while (!TextIO.eof()) {
-//            String[] line = TextIO.getln().trim().strip().split(",");
-//            double monthlyTotal = Double.parseDouble(line[2]);
-//            allMonthlyTotals.add(monthlyTotal);
-//            if (monthlyTotal > maxMonthlyTotal)
-//                maxMonthlyTotal = monthlyTotal;
-//
-//            int year = Integer.parseInt(line[0]);
-//            if (year < firstYear)
-//                firstYear = year;
-//            else if (year > lastYear)
-//                lastYear = year;
-//        }
 
         RainfallAnalyser analysedRainfallData = new RainfallAnalyser();
         RainfallData rainfallData = new RainfallData();
@@ -121,13 +98,9 @@ public class RainfallVisualiser extends Application {
 
 
     public static void main(String[] args) {
-//        System.out.print("Enter path: ");
-//        var path = TextIO.getln();
-
         // Used for testing
 //        var path = "src/main/resources/betaversion/cp2406assignment_beta/MountSheridanStationCNS.csv";
         var path = "src/main/resources/betaversion/cp2406assignment_beta/IDCJAC0009_031205_1800_Data.csv";
-        TextIO.readFile(path);
         launch();
     }
 
