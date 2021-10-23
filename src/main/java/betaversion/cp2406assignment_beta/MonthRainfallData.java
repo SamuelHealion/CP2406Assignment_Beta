@@ -26,6 +26,10 @@ public class MonthRainfallData {
                 return (month + "/" + year + " had " + total + " millimeters of rain");
         }
 
+        public String getDate() {
+                return month + "/" + year;
+        }
+
         public double getTotal() {
                 return total;
         }

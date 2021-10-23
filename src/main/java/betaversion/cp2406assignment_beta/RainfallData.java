@@ -4,33 +4,41 @@ import java.util.ArrayList;
 
 /**
  * CP2406 Assignment - Samuel Healion
- * RainfallDataSet is used as an array of MonthDataSet objects.
+ * RainfallData is used as an array of MonthRainfallData objects.
  * Includes a number of methods to analyse the full data set.
  */
 public class RainfallData {
 
-    private final ArrayList<MonthRainfallData> totalDataSet = new ArrayList<>();
+    private final ArrayList<MonthRainfallData> totalRainfallData = new ArrayList<>();
 
     public void addDataSet(double newTotal, double newMin, double newMax, int newMonth, int newYear) {
-        MonthRainfallData newDataSet = new MonthRainfallData(newTotal, newMin, newMax, newMonth, newYear);
-        totalDataSet.add(newDataSet);
+        MonthRainfallData newData = new MonthRainfallData(newTotal, newMin, newMax, newMonth, newYear);
+        totalRainfallData.add(newData);
     }
 
+    /**
+     * Used to iterate through the array
+     */
     public ArrayList<MonthRainfallData> getRainfallData() {
-        return totalDataSet;
+        return totalRainfallData;
     }
 
     public int getNumberOfMonths() {
-        return totalDataSet.size();
+        return totalRainfallData.size();
     }
 
+    /**
+     * Set the earliest month and last month to an arbitrary value and calculate the starting month/year
+     * and ending month/year
+     * @return String containing the date range
+     */
     public String getDateRange() {
         int firstMonth = 13;
         int lastMonth = 0;
         int firstYear = 9999;
         int lastYear = 0;
 
-        for (MonthRainfallData monthRainfallData : totalDataSet) {
+        for (MonthRainfallData monthRainfallData : totalRainfallData) {
             if (monthRainfallData.getYear() < firstYear) {
                 firstYear = monthRainfallData.getYear();
                 if (monthRainfallData.getMonth() < firstMonth)
@@ -48,7 +56,7 @@ public class RainfallData {
     public double getMaxTotalRainfall() {
         double maxTotalRainfall = Double.NEGATIVE_INFINITY;
 
-        for (MonthRainfallData monthRainfallData : totalDataSet) {
+        for (MonthRainfallData monthRainfallData : totalRainfallData) {
             if (monthRainfallData.getTotal() > maxTotalRainfall)
                 maxTotalRainfall = monthRainfallData.getTotal();
         }
@@ -58,7 +66,7 @@ public class RainfallData {
     public double getMinRainfall() {
         double minRainfall = Double.POSITIVE_INFINITY;
 
-        for (MonthRainfallData monthRainfallData : totalDataSet) {
+        for (MonthRainfallData monthRainfallData : totalRainfallData) {
             if (monthRainfallData.getMin() < minRainfall)
                 minRainfall = monthRainfallData.getMin();
         }
@@ -68,7 +76,7 @@ public class RainfallData {
     public double getMaxRainfall() {
         double maxRainfall = Double.NEGATIVE_INFINITY;
 
-        for (MonthRainfallData monthRainfallData : totalDataSet) {
+        for (MonthRainfallData monthRainfallData : totalRainfallData) {
             if (monthRainfallData.getMax() > maxRainfall)
                 maxRainfall = monthRainfallData.getMax();
         }
