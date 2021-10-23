@@ -6,15 +6,15 @@ package betaversion.cp2406assignment_beta;
  * Includes setter/getter methods for each variable
  * Extra method added to set all the variables at once
  */
-public class MonthDataSet {
+public class MonthRainfallData {
 
-        private double total;
-        private double min;
-        private double max;
-        private int month;
-        private int year;
+        private final double total;
+        private final double min;
+        private final double max;
+        private final int month;
+        private final int year;
 
-        public void setRainfallData (double newTotal, double newMin, double newMax, int newMonth, int newYear) {
+        public MonthRainfallData(double newTotal, double newMin, double newMax, int newMonth, int newYear) {
                 total = newTotal;
                 min = newMin;
                 max = newMax;
@@ -22,28 +22,8 @@ public class MonthDataSet {
                 year = newYear;
         }
 
-        public String printTotal() {
+        public String toString() {
                 return (month + "/" + year + " had " + total + " millimeters of rain");
-        }
-
-        public void setTotal(double newTotal) {
-                total = newTotal;
-        }
-
-        public void setMin(double newMin) {
-                min = newMin;
-        }
-
-        public void setMax(double newMax) {
-                max = newMax;
-        }
-
-        public void setMonth(int newMonth) {
-                month = newMonth;
-        }
-
-        public void setYear(int newYear) {
-                year = newYear;
         }
 
         public double getTotal() {

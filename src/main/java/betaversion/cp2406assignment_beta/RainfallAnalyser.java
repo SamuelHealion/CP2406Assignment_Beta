@@ -15,8 +15,8 @@ import java.util.Objects;
  */
 public class RainfallAnalyser {
 
-    public RainfallDataSet analyseDataSet(String path) throws IOException {
-        RainfallDataSet newDataSet = new RainfallDataSet();
+    public RainfallData analyseDataSet(String path) throws IOException {
+        RainfallData newDataSet = new RainfallData();
 
         Reader reader = new FileReader(path);
         Iterable<CSVRecord> records = CSVFormat.DEFAULT.withHeader().parse(reader);
@@ -52,6 +52,7 @@ public class RainfallAnalyser {
             // Check to see if it's the next month
             if (month != currentMonth) {
                 newDataSet.addDataSet(monthlyTotal, minRainfall, maxRainfall, currentMonth, currentYear == 0? year : currentYear);
+//                System.out.println(newDataSet.totalDataSet);
                 currentYear = year;
                 currentMonth = month;
                 monthlyTotal = 0;

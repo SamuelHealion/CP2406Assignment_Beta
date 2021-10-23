@@ -7,23 +7,16 @@ public class ClassTester {
 
         // Tests for MonthDataSet class
         System.out.println("\nTests for MonthDataSet class");
-        MonthDataSet newMonth = new MonthDataSet();
-        newMonth.setTotal(55.8);
-        newMonth.setMin(0);
-        newMonth.setMax(22);
-        newMonth.setMonth(4);
-        newMonth.setYear(2020);
+        MonthRainfallData newMonth = new MonthRainfallData(55.8,0,22,4,2020);
+        MonthRainfallData extraMonth = new MonthRainfallData(595, 2, 200,5,2020);
 
-        MonthDataSet extraMonth = new MonthDataSet();
-        extraMonth.setRainfallData(595, 2, 200,5,2020);
-
-        System.out.println(newMonth.printTotal());
-        System.out.println(extraMonth.printTotal());
+        System.out.println(newMonth);
+        System.out.println(extraMonth);
 
 
         // Tests for RainfallDataSet class
         System.out.println("\nTests for RainfallDataSet class");
-        RainfallDataSet newRainfallData = new RainfallDataSet();
+        RainfallData newRainfallData = new RainfallData();
         newRainfallData.addDataSet(55.8, 0, 22,4,2020);
         newRainfallData.addDataSet(595, 2, 200,5,2020);
 
@@ -36,15 +29,21 @@ public class ClassTester {
 
 
         // Tests for RainfallAnalyser class
+        System.out.println("\nTests for RainfallAnalyser class");
         RainfallAnalyser analysedDataSet = new RainfallAnalyser();
-        RainfallDataSet testDataSet = new RainfallDataSet();
+        RainfallData testDataSet = new RainfallData();
         try {
             testDataSet = analysedDataSet.analyseDataSet("src/main/resources/betaversion/cp2406assignment_beta/MountSheridanStationCNS.csv");
-            System.out.println("It worked");
+            System.out.println("Successfully loaded the data");
         } catch (IOException err) {
             System.out.println("Something went wrong");
             System.out.println(err.getMessage());
         }
-        System.out.println(testDataSet);
+
+//        for (MonthDataSet monthData: testDataSet.getRainfallData())
+//            System.out.println(monthData.printTotal());
+
+        System.out.println(testDataSet.getDateRange());
+        System.out.println(testDataSet.getNumberOfMonths());
     }
 }
