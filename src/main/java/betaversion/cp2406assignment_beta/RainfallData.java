@@ -11,7 +11,7 @@ public class RainfallData {
 
     private final ArrayList<MonthRainfallData> totalRainfallData = new ArrayList<>();
 
-    public void addDataSet(double newTotal, double newMin, double newMax, int newMonth, int newYear) {
+    public void addRainfallData(double newTotal, double newMin, double newMax, int newMonth, int newYear) {
         MonthRainfallData newData = new MonthRainfallData(newTotal, newMin, newMax, newMonth, newYear);
         totalRainfallData.add(newData);
     }

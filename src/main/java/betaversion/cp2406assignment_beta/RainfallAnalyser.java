@@ -6,7 +6,6 @@ import org.apache.commons.csv.CSVRecord;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.Objects;
 
 /**
  * CP2406 Assignment - Samuel Healion
@@ -15,8 +14,8 @@ import java.util.Objects;
  */
 public class RainfallAnalyser {
 
-    public RainfallData analyseDataSet(String path) throws IOException {
-        RainfallData newDataSet = new RainfallData();
+    public RainfallData analyseDataSet(String path) throws IOException, NumberFormatException {
+        RainfallData newRainfallData = new RainfallData();
 
         Reader reader = new FileReader(path);
         Iterable<CSVRecord> records = CSVFormat.DEFAULT.withHeader().parse(reader);
@@ -27,6 +26,7 @@ public class RainfallAnalyser {
         double monthlyTotal = 0.0;
         double minRainfall = Double.POSITIVE_INFINITY;
         double maxRainfall = 0.0;
+        boolean startReadingData = false;
 
         for (CSVRecord record : records) {
             // Get the data from specific rows of the Rainfall Data CSV file
@@ -35,24 +35,31 @@ public class RainfallAnalyser {
             String dayText = record.get("Day");
             String rainfallText = record.get("Rainfall amount (millimetres)");
 
-            // Analyse the data and convert it into the expected output format
-            year = Integer.parseInt(yearText);
-            month = Integer.parseInt(monthText);
-            day = Integer.parseInt(dayText);
-
-            // Check if the recorded date is valid
-            if ((month < 1 || month > 12) || (day < 1 || day > 31)) {
-                System.out.println("Error: Invalid format for dates");
-                break;
+            // Check if there is data for rainfall
+            if (rainfallText.isEmpty()) {
+                continue; // If the entry is empty, ignore it and move to the next entry
             }
+            else {
+                rainfall = Double.parseDouble(rainfallText);
 
-            // Check if there is data for rainfall, otherwise assume zero
-            rainfall = Objects.equals(rainfallText, "") ? 0 : Double.parseDouble(rainfallText);
+                // Analyse the data and convert it into the expected output format
+                // then check if the recorded date is valid
+                year = Integer.parseInt(yearText);
+                month = Integer.parseInt(monthText);
+                day = Integer.parseInt(dayText);
+                if ((month < 1 || month > 12) || (day < 1 || day > 31)) {
+                    throw new NumberFormatException("Date outside of expected range");
+                }
+            }
 
             // Check to see if it's the next month
             if (month != currentMonth) {
-                newDataSet.addDataSet(monthlyTotal, minRainfall, maxRainfall, currentMonth, currentYear == 0? year : currentYear);
-//                System.out.println(newDataSet.totalDataSet);
+                // Included to ignore any initial null values
+                if (!startReadingData) {
+                    startReadingData = true;
+                } else {
+                    newRainfallData.addRainfallData(monthlyTotal, minRainfall, maxRainfall, currentMonth, currentYear == 0 ? year : currentYear);
+                }
                 currentYear = year;
                 currentMonth = month;
                 monthlyTotal = 0;
@@ -66,8 +73,8 @@ public class RainfallAnalyser {
             if (rainfall < minRainfall) minRainfall = rainfall;
         }
         // Catch an incomplete month when exiting the for loop
-        newDataSet.addDataSet(monthlyTotal, minRainfall, maxRainfall, currentMonth, currentYear);
+        newRainfallData.addRainfallData(monthlyTotal, minRainfall, maxRainfall, currentMonth, currentYear);
 
-        return newDataSet;
+        return newRainfallData;
     }
 }

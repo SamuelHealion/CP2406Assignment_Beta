@@ -17,8 +17,8 @@ public class ClassTester {
         // Tests for RainfallData class
         System.out.println("\nTests for RainfallData class");
         RainfallData newRainfallData = new RainfallData();
-        newRainfallData.addDataSet(55.8, 0, 22,4,2020);
-        newRainfallData.addDataSet(595, 2, 200,5,2020);
+        newRainfallData.addRainfallData(55.8, 0, 22,4,2020);
+        newRainfallData.addRainfallData(595, 2, 200,5,2020);
 
         System.out.println("There are " + newRainfallData.getNumberOfMonths() + " months of rainfall data");
         System.out.println(newRainfallData.getDateRange());
@@ -38,12 +38,15 @@ public class ClassTester {
         } catch (IOException err) {
             System.out.println("Something went wrong");
             System.out.println(err.getMessage());
+        } catch (NumberFormatException err) {
+            System.out.println("There was an issue in the file data");
+            System.out.println(err.getMessage());
         }
 
-//        for (MonthRainfallData monthData: testRainfallData.getRainfallData())
-//            System.out.println(monthData.getDate() + " had " + monthData.getTotal() + " millimeters of rain");
+        for (MonthRainfallData monthData: testRainfallData.getRainfallData())
+            System.out.println(monthData.getDate() + " had " + monthData.getTotal() + " millimeters of rain");
 
         System.out.println(testRainfallData.getDateRange());
-        System.out.println(testRainfallData.getNumberOfMonths());
+        System.out.println("There are " + testRainfallData.getNumberOfMonths() + " months of data");
     }
 }
