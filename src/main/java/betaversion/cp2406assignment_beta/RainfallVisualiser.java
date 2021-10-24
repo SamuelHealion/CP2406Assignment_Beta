@@ -31,10 +31,10 @@ public class RainfallVisualiser extends Application {
         g.strokeLine(border_width, height - border_width, width - border_width, height - border_width);
 
 
-        RainfallAnalyser analysedRainfallData = new RainfallAnalyser();
+        RainfallAnalyser rainfallAnalyser = new RainfallAnalyser();
         RainfallData rainfallData = new RainfallData();
         try {
-            rainfallData = analysedRainfallData.analyseDataSet("src/main/resources/betaversion/cp2406assignment_beta/IDCJAC0009_031205_1800_Data.csv");
+            rainfallData = rainfallAnalyser.analyseDataSet("src/main/resources/betaversion/cp2406assignment_beta/IDCJAC0009_031205_1800_Data.csv");
             System.out.println("Successfully loaded the data");
         } catch (IOException err) {
             System.out.println("Something went wrong");
