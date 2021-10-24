@@ -3,8 +3,8 @@ package betaversion.cp2406assignment_beta;
 /**
  * CP2406 Assignment - Samuel Healion
  * Basic class representing a single months' rainfall data.
- * Includes setter/getter methods for each variable
- * Extra method added to set all the variables at once
+ * Includes the constructor method and getter methods for
+ * the Date and each variable.
  */
 public class MonthRainfallData {
 
@@ -22,6 +22,7 @@ public class MonthRainfallData {
                 year = newYear;
         }
 
+        @Override
         public String toString() {
                 return (month + "/" + year + " had " + total + " millimeters of rain");
         }

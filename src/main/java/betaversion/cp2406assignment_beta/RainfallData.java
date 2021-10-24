@@ -11,26 +11,35 @@ public class RainfallData {
 
     private final ArrayList<MonthRainfallData> totalRainfallData = new ArrayList<>();
 
+    /**
+     * Add a single months' rainfall data to the array created by the RainfallData Object.
+     * This class has no other setter methods, so any rainfall data added to a RainfallData
+     * object must contain all constructor values.
+     */
     public void addRainfallData(double newTotal, double newMin, double newMax, int newMonth, int newYear) {
         MonthRainfallData newData = new MonthRainfallData(newTotal, newMin, newMax, newMonth, newYear);
         totalRainfallData.add(newData);
     }
 
     /**
-     * Used to iterate through the array
+     * Return the private variable totalRainfallData.
+     * Used to iterate through the data of a RainfallData object.
      */
     public ArrayList<MonthRainfallData> getRainfallData() {
         return totalRainfallData;
     }
 
+    /**
+     * Get the number of entries recorded in totalRainfallData.
+     */
     public int getNumberOfMonths() {
         return totalRainfallData.size();
     }
 
     /**
-     * Set the earliest month and last month to an arbitrary value and calculate the starting month/year
+     * Get the date range of a RainfallData object.
+     * Sets the earliest month and last month to an arbitrary value then calculates the starting month/year
      * and ending month/year
-     * @return String containing the date range
      */
     public String getDateRange() {
         int firstMonth = 13;
@@ -53,6 +62,9 @@ public class RainfallData {
         return ("Rainfall data from " + firstMonth + "/" + firstYear + " to " + lastMonth + "/" + lastYear);
     }
 
+    /**
+     * Get the total recorded rainfall over the entire recorded rainfall.
+     */
     public double getMaxTotalRainfall() {
         double maxTotalRainfall = Double.NEGATIVE_INFINITY;
 
@@ -63,6 +75,9 @@ public class RainfallData {
         return maxTotalRainfall;
     }
 
+    /**
+     * Get the lowest recorded rainfall for a single month.
+     */
     public double getMinRainfall() {
         double minRainfall = Double.POSITIVE_INFINITY;
 
@@ -73,6 +88,9 @@ public class RainfallData {
         return minRainfall;
     }
 
+    /**
+     * Get the highest recorded rainfall for a single month.
+     */
     public double getMaxRainfall() {
         double maxRainfall = Double.NEGATIVE_INFINITY;
 

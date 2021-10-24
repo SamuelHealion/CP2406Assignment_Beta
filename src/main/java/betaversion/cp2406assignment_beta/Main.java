@@ -79,7 +79,7 @@ public class Main extends Application {
 
         startButton.setOnAction(e -> {
 //            BorderPane visualiserRoot = new BorderPane(RainfallVisualiser.getCanvas(rainfallData));
-            BorderPane visualiserRoot = new BorderPane(RainfallVisualiser.getRainfallChart(rainfallData));
+            BorderPane visualiserRoot = new BorderPane(RainfallVisualiser.getRainfallBarChart(rainfallData));
             Button returnButton = new Button("Close Visualiser");
 
             HBox visualiserHBox = new HBox(returnButton);
