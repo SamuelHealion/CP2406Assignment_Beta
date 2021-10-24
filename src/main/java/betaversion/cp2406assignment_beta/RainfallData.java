@@ -50,7 +50,7 @@ public class RainfallData {
                     lastMonth = monthRainfallData.getMonth();
             }
         }
-        return ("There is rainfall data from " + firstMonth + "/" + firstYear + " to " + lastMonth + "/" + lastYear);
+        return ("Rainfall data from " + firstMonth + "/" + firstYear + " to " + lastMonth + "/" + lastYear);
     }
 
     public double getMaxTotalRainfall() {

@@ -1,9 +1,10 @@
 package betaversion.cp2406assignment_beta;
 
-import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.chart.*;
+import javafx.scene.control.Tooltip;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
@@ -13,59 +14,47 @@ import javafx.scene.text.Font;
  */
 public class RainfallVisualiser {
 
-    public static Canvas getCanvas(RainfallData rainfallData) {
+    public static StackedBarChart<String, Number> getRainfallChart(RainfallData rainfallData) {
 
-        int width = 200 * 6 + 40;
-        int height = 500;
-        Canvas canvas = new Canvas(width, height);
-        drawPicture(canvas.getGraphicsContext2D(), width, height, rainfallData);
+        final CategoryAxis xAxis = new CategoryAxis();
+        xAxis.setLabel("Dates");
+        final NumberAxis yAxis = new NumberAxis();
+        yAxis.setLabel("Rainfall (millimeters)");
 
-        return canvas;
-    }
+        StackedBarChart<String, Number> rainfallChart = new StackedBarChart<>(xAxis, yAxis);
+        XYChart.Series<String, Number> totals = new XYChart.Series<>();
+        XYChart.Series<String, Number> mins = new XYChart.Series<>();
+        XYChart.Series<String, Number> maxs = new XYChart.Series<>();
 
-    /**
-     * Draws a picture.  The parameters width and height give the size
-     * of the drawing area, in pixels.
-     */
-    public static void drawPicture(GraphicsContext g, int width, int height, RainfallData rainfallData) {
+        rainfallChart.setTitle(rainfallData.getDateRange());
+        rainfallChart.setCategoryGap(0.0);
+        rainfallChart.setLegendVisible(false);
+        rainfallChart.setOnMouseDragOver((MouseEvent e) -> System.out.println("Dragged over"));
 
-        // Create the x-axis and y-axis
-        int border_width = 20;
-        g.setStroke(Color.BLACK);
-        g.setLineWidth(2);
-        g.strokeLine(border_width, border_width, border_width, height - border_width);
-        g.strokeLine(border_width, height - border_width, width - border_width, height - border_width);
+        for (MonthRainfallData monthRainfallData: rainfallData.getRainfallData()) {
 
-        double xAxisLength = width - 2 * border_width;
-        double yAxisLength = height - 2 * border_width;
-        double currentXPos = border_width;
-        double barWidth = xAxisLength / rainfallData.getNumberOfMonths();
-        double maxMonthlyTotal = rainfallData.getMaxTotalRainfall();
+            double minMaxDiff = monthRainfallData.getMax() - monthRainfallData.getMin();
+            double totalDiff = monthRainfallData.getTotal() - minMaxDiff;
 
-        g.setFill(Color.BLUE);
-        g.setLineWidth(0.5);
-
-        for (MonthRainfallData monthData : rainfallData.getRainfallData()) {
-            // Get the height of the column relative to the maximum height
-            double columnHeight = (monthData.getTotal() / maxMonthlyTotal) * yAxisLength;
-
-            // Draw the rectangle representing the rainfall and draw a black outline
-            g.fillRect(currentXPos, height - border_width - columnHeight, barWidth, columnHeight);
-            g.strokeRect(currentXPos, height - border_width - columnHeight, barWidth, columnHeight);
-
-            currentXPos += barWidth;
+            mins.getData().add(new XYChart.Data<>(monthRainfallData.getDate(), monthRainfallData.getMin()));
+            maxs.getData().add(new XYChart.Data<>(monthRainfallData.getDate(), minMaxDiff));
+            totals.getData().add(new XYChart.Data<>(monthRainfallData.getDate(), totalDiff));
         }
 
-        // Add a title and axis names
-        g.setFill(Color.BLACK);
-        g.setFont(Font.font(24));
-        g.fillText("Analysed Rainfall", width/2.5, border_width);
+        rainfallChart.getData().addAll(mins, maxs, totals);
 
-        g.setFont(Font.font(15));
-        g.fillText("Months", width/2.0, height-5);
+        double[] minValues = new double[rainfallData.getNumberOfMonths()];
+        int i;
+        for (XYChart.Series<String, Number> newSeries: rainfallChart.getData()) {
+            i = 0;
+            for (XYChart.Data<String, Number> item : newSeries.getData()) {
+                Tooltip.install(item.getNode(), new Tooltip((item.getYValue().doubleValue() + minValues[i])+""));
+                minValues[i] += item.getYValue().doubleValue();
+                i++;
+            }
+        }
 
-        g.rotate(-90);
-        g.fillText("Rainfall (millimeters)",-height/1.6, border_width-5);
-    } // end drawPicture()
+        return rainfallChart;
+    }
 
 } // end RainfallVisualiser

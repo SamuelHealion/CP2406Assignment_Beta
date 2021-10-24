@@ -59,6 +59,7 @@ public class RainfallAnalyser {
                     startReadingData = true;
                 } else {
                     newRainfallData.addRainfallData(monthlyTotal, minRainfall, maxRainfall, currentMonth, currentYear == 0 ? year : currentYear);
+
                 }
                 currentYear = year;
                 currentMonth = month;
