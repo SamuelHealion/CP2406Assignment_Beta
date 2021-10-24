@@ -8,6 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -18,16 +19,17 @@ public class Main extends Application {
 
     private static RainfallData rainfallData = new RainfallData();
 
-    private Stage primaryStage;
+    private Stage homeStage;
 
     public static void main(String[] args) {
         launch(args);
     }
 
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage stage) {
 
         Label message = new Label("Welcome to the Rainfall Analyser/Visualiser");
+        message.setFont(new Font(20));
 
         // Set up all the buttons and put them in a Hbox
         Button startButton = new Button("Start Visualiser");
@@ -42,29 +44,25 @@ public class Main extends Application {
         root.setCenter(message);
         root.setBottom(buttonBar);
 
-        Scene primaryScene = new Scene(root, 500, 500);
-        primaryStage.setScene(primaryScene);
-        primaryStage.setTitle("Rainfall Visualiser - Samuel Healion");
+        Scene homeScene = new Scene(root, 500, 500);
+        stage.setScene(homeScene);
+        stage.setTitle("CP2406 Assignment - Samuel Healion");
 
 
-        // Set up the secondary root and scene
-        BorderPane secondaryRoot = new BorderPane();
-        Label newMessage = new Label("It worked!");
-        secondaryRoot.setCenter(newMessage);
-
-        Scene secondaryScene = new Scene(secondaryRoot, 500, 500);
-
-
-        startButton.setOnAction(e -> primaryStage.setScene(secondaryScene));
+        startButton.setOnAction(e -> {
+            Scene visualiserScene = RainfallVisualiser.getScene(rainfallData);
+            stage.setScene(visualiserScene);
+            stage.setTitle("Rainfall Visualiser");
+        } );
         loadButton.setOnAction(e -> rainfallData = loadRainfallData());
         quitButton.setOnAction(e -> Platform.exit());
 
-        primaryStage.show();
+        stage.show();
     }
 
     private RainfallData loadRainfallData() {
         FileChooser chooser = new FileChooser();
-        File file = chooser.showOpenDialog(primaryStage);
+        File file = chooser.showOpenDialog(homeStage);
         String path = file.getAbsolutePath();
 
         RainfallAnalyser rainfallAnalyser = new RainfallAnalyser();
