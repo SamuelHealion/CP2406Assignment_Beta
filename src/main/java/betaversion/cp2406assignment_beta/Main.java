@@ -19,7 +19,7 @@ public class Main extends Application {
 
     private static RainfallData rainfallData = new RainfallData();
 
-    private Stage homeStage;
+    private final Stage homeStage = new Stage();
 
     public static void main(String[] args) {
         launch(args);
@@ -50,9 +50,19 @@ public class Main extends Application {
 
 
         startButton.setOnAction(e -> {
-            Scene visualiserScene = RainfallVisualiser.getScene(rainfallData);
+            BorderPane visualiserRoot = new BorderPane(RainfallVisualiser.getCanvas(rainfallData));
+            Button returnButton = new Button("Close Visualiser");
+
+            HBox visualiserHBox = new HBox(returnButton);
+            visualiserHBox.setAlignment(Pos.CENTER);
+
+            visualiserRoot.setBottom(visualiserHBox);
+            visualiserRoot.setStyle("-fx-border-width: 4px; -fx-border-color: #444");
+            Scene visualiserScene = new Scene(visualiserRoot);
             stage.setScene(visualiserScene);
             stage.setTitle("Rainfall Visualiser");
+
+            returnButton.setOnAction(actionEvent -> stage.setScene(homeScene));
         } );
         loadButton.setOnAction(e -> rainfallData = loadRainfallData());
         quitButton.setOnAction(e -> Platform.exit());

@@ -13,19 +13,14 @@ import javafx.scene.text.Font;
  */
 public class RainfallVisualiser {
 
-    public static Scene getScene(RainfallData rainfallData) {
-
-        for (MonthRainfallData monthRainfallData : rainfallData.getRainfallData())
-            System.out.println(monthRainfallData.getTotal());
+    public static Canvas getCanvas(RainfallData rainfallData) {
 
         int width = 200 * 6 + 40;
         int height = 500;
         Canvas canvas = new Canvas(width, height);
         drawPicture(canvas.getGraphicsContext2D(), width, height, rainfallData);
-        BorderPane root = new BorderPane(canvas);
-        root.setStyle("-fx-border-width: 4px; -fx-border-color: #444");
 
-        return new Scene(root);
+        return canvas;
     }
 
     /**
@@ -59,8 +54,6 @@ public class RainfallVisualiser {
             g.strokeRect(currentXPos, height - border_width - columnHeight, barWidth, columnHeight);
 
             currentXPos += barWidth;
-
-            System.out.println(monthData.getTotal());
         }
 
         // Add a title and axis names
@@ -74,6 +67,5 @@ public class RainfallVisualiser {
         g.rotate(-90);
         g.fillText("Rainfall (millimeters)",-height/1.6, border_width-5);
     } // end drawPicture()
-
 
 } // end RainfallVisualiser
