@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="gillius.jfxutils" type="repository">
+    <properties maven-id="org.gillius:jfxutils:1.0" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/gillius/jfxutils/1.0/jfxutils-1.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

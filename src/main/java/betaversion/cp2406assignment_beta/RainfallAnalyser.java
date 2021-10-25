@@ -27,6 +27,7 @@ public class RainfallAnalyser {
         double maxRainfall = 0.0;
         boolean startReadingData = false;
 
+
         for (CSVRecord record : records) {
             // Get the data from specific rows of the Rainfall Data CSV file
             String yearText = record.get("Year");
@@ -77,5 +78,9 @@ public class RainfallAnalyser {
         return newRainfallData;
 
     } // end analyseRainfallData()
+
+    public void saveRainfallData(RainfallData rainfallData) {
+
+    }
 
 } // end RainfallAnalyser

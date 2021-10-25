@@ -4,9 +4,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
@@ -21,23 +19,9 @@ public class Main extends Application {
     private static RainfallData rainfallData = new RainfallData();
 
     private Scene homeScene;
+    private final MenuBar menuBar = new MenuBar();
 
-    public static void main(String[] args) {
-        RainfallAnalyser rainfallAnalyser = new RainfallAnalyser();
-        try {
-            rainfallData = rainfallAnalyser.analyseRainfallData("src/main/resources/betaversion/cp2406assignment_beta/MountSheridanStationCNS.csv");
-        } catch (IOException err) {
-            System.out.println("Something went wrong");
-            System.out.println(err.getMessage());
-        } catch (NumberFormatException err) {
-            System.out.println("There was an issue in the file data");
-            System.out.println(err.getMessage());
-        } catch (IllegalArgumentException err) {
-            System.out.println("There was an issue parsing the rainfall data");
-            System.out.println(err.getMessage());
-        }
-        launch(args);
-    }
+    public static void main(String[] args) { launch(args); }
 
     @Override
     public void start(Stage stage) {
@@ -50,8 +34,9 @@ public class Main extends Application {
         Button loadButton = new Button("Load Rainfall Data");
         Button quitButton = new Button("Quit");
 
-        HBox buttonBar = new HBox(50, startButton, loadButton, quitButton);
+        HBox buttonBar = new HBox(100, startButton, loadButton, quitButton);
         buttonBar.setAlignment(Pos.CENTER);
+        buttonBar.setPrefHeight(50);
 
         Tooltip startTooltip = new Tooltip(), loadTooltip = new Tooltip(), quitTooltip = new Tooltip();
         startTooltip.setText("Starts the Rainfall Visualiser");
@@ -61,16 +46,21 @@ public class Main extends Application {
         quitTooltip.setText("Exits the Rainfall Visualiser");
         Tooltip.install(quitButton, quitTooltip);
 
+        createMenuBar(stage);
+
         // Set up the first root and scene
         BorderPane homeRoot = new BorderPane();
         homeRoot.setCenter(message);
         homeRoot.setBottom(buttonBar);
-        homeRoot.setStyle("-fx-border-width: 3px; -fx-border-color: #444");
+        homeRoot.setTop(menuBar);
+        homeRoot.setStyle("-fx-border-width: 2px; -fx-border-color: #444");
+
 
         homeScene = new Scene(homeRoot, 600, 600);
         stage.setScene(homeScene);
         stage.setTitle("CP2406 Assignment - Samuel Healion");
         stage.centerOnScreen();
+        stage.setResizable(false);
 
 
         startButton.setOnAction(e -> buildRainfallVisualiserStage(stage));
@@ -78,6 +68,30 @@ public class Main extends Application {
         quitButton.setOnAction(e -> Platform.exit());
 
         stage.show();
+    }
+
+    private void createMenuBar(Stage stage) {
+        Menu fileMenu = new Menu("File");
+        Menu helpMenu = new Menu("Help");
+        menuBar.getMenus().addAll(fileMenu, helpMenu);
+
+        MenuItem open = new MenuItem("Open");
+        open.setOnAction(e -> {
+            if (stage.getScene().equals(homeScene))
+                loadRainfallData(stage);
+            else {
+                loadRainfallData(stage);
+                buildRainfallVisualiserStage(stage);
+            }
+        });
+
+        MenuItem save = new MenuItem("Save");
+
+
+        MenuItem close = new MenuItem("Close");
+        close.setOnAction(e -> Platform.exit());
+
+        fileMenu.getItems().addAll(open, save, close);
     }
 
     /**
@@ -91,8 +105,9 @@ public class Main extends Application {
         HBox visualiserHBox = new HBox(returnButton);
         visualiserHBox.setAlignment(Pos.CENTER);
 
+        visualiserRoot.setTop(menuBar);
         visualiserRoot.setBottom(visualiserHBox);
-        visualiserRoot.setStyle("-fx-border-width: 5px; -fx-border-color: GRAY");
+        visualiserRoot.setStyle("-fx-border-width: 2px; -fx-border-color: GRAY");
         Scene visualiserScene = new Scene(visualiserRoot, 1200, 600);
         stage.setScene(visualiserScene);
         stage.setTitle("Rainfall Visualiser");
