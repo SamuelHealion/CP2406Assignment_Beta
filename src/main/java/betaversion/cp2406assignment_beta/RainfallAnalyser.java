@@ -14,9 +14,8 @@ import java.io.Reader;
  */
 public class RainfallAnalyser {
 
-    public RainfallData analyseDataSet(String path) throws IOException, NumberFormatException {
+    public RainfallData analyseRainfallData(String path) throws IOException, NumberFormatException {
         RainfallData newRainfallData = new RainfallData();
-
         Reader reader = new FileReader(path);
         Iterable<CSVRecord> records = CSVFormat.DEFAULT.withHeader().parse(reader);
         int year, month, day;
@@ -54,12 +53,11 @@ public class RainfallAnalyser {
 
             // Check to see if it's the next month
             if (month != currentMonth) {
-                // Included to ignore any initial null values
+                // Ignore any initial null values for rainfall
                 if (!startReadingData) {
                     startReadingData = true;
                 } else {
                     newRainfallData.addRainfallData(monthlyTotal, minRainfall, maxRainfall, currentMonth, currentYear == 0 ? year : currentYear);
-
                 }
                 currentYear = year;
                 currentMonth = month;
@@ -77,5 +75,7 @@ public class RainfallAnalyser {
         newRainfallData.addRainfallData(monthlyTotal, minRainfall, maxRainfall, currentMonth, currentYear);
 
         return newRainfallData;
-    }
-}
+
+    } // end analyseRainfallData()
+
+} // end RainfallAnalyser

@@ -7,7 +7,10 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.Tooltip;
 
 /**
- *
+ * Rainfall Visualiser class - Beta Version
+ * Rebuilt from alpha version to create a StackedBarChart object based on the provided rainfall data
+ * instead of representing the rainfall data as drawn rectangles.
+ * Also adds Tooltips to each bar that will show the exact rainfall value of that bar.
  */
 public class RainfallVisualiser {
 
@@ -34,9 +37,9 @@ public class RainfallVisualiser {
         rainfallChart.setVerticalGridLinesVisible(false);
         rainfallChart.setHorizontalGridLinesVisible(false);
 
-        // Loop through each item of Rainfall data and set the min, max and total to their corresponding
-        // XYChart series. minMaxDiff and totalDiff are used to correctly scale the chart as StackedBarChart
-        // do not stack each bar on top of the previous one
+        /* Loop through each item of Rainfall data and set the min, max and total to their corresponding
+        XYChart series. minMaxDiff and totalDiff are used to correctly scale the chart as StackedBarChart
+        do not stack each bar on top of the previous one */
         for (MonthRainfallData monthRainfallData: rainfallData.getRainfallData()) {
             double minMaxDiff = monthRainfallData.getMax() - monthRainfallData.getMin();
             double totalDiff = monthRainfallData.getTotal() - minMaxDiff;
@@ -46,14 +49,19 @@ public class RainfallVisualiser {
             totals.getData().add(new XYChart.Data<>(monthRainfallData.getDate(), totalDiff));
         }
 
-        // Add all the series data to the StackedBarChart
-        rainfallChart.getData().addAll(mins, maxs, totals);
+        /* Add all the series data to the StackedBarChart
+        Separated into three individual method calls to remove
+        unchecked generic array creation for varargs parameter */
+        rainfallChart.getData().add(mins);
+        rainfallChart.getData().add(maxs);
+        rainfallChart.getData().add(totals);
 
-        // Add tooltips for exact values
+        // Add tooltips for rainfall values
         createTooltips(rainfallData, rainfallChart);
 
         return rainfallChart;
-    }
+
+    } // end getRainfallBarChart
 
     /**
      * Creates the tooltips for each bar of the StackedBarGraph.
@@ -81,6 +89,6 @@ public class RainfallVisualiser {
             }
             j++;
         }
-    }
+    } // end createTooltips
 
 } // end RainfallVisualiser

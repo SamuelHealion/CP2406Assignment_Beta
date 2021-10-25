@@ -33,7 +33,7 @@ public class ClassTester {
         RainfallAnalyser analysedRainfallData = new RainfallAnalyser();
         RainfallData testRainfallData = new RainfallData();
         try {
-            testRainfallData = analysedRainfallData.analyseDataSet("src/main/resources/betaversion/cp2406assignment_beta/IDCJAC0009_031205_1800_Data.csv");
+            testRainfallData = analysedRainfallData.analyseRainfallData("src/main/resources/betaversion/cp2406assignment_beta/IDCJAC0009_031205_1800_Data.csv");
             System.out.println("Successfully loaded the data");
         } catch (IOException err) {
             System.out.println("Something went wrong");

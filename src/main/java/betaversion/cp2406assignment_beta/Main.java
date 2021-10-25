@@ -20,18 +20,12 @@ public class Main extends Application {
 
     private static RainfallData rainfallData = new RainfallData();
 
-    private final Stage homeStage = new Stage();
+    private Scene homeScene;
 
     public static void main(String[] args) {
         RainfallAnalyser rainfallAnalyser = new RainfallAnalyser();
         try {
-            rainfallData = rainfallAnalyser.analyseDataSet("src/main/resources/betaversion/cp2406assignment_beta/MountSheridanStationCNS.csv");
-
-            for (MonthRainfallData monthRainfallData: rainfallData.getRainfallData()) {
-                System.out.println(monthRainfallData.toString());
-                System.out.println(monthRainfallData.getMin());
-                System.out.println(monthRainfallData.getMax());
-            }
+            rainfallData = rainfallAnalyser.analyseRainfallData("src/main/resources/betaversion/cp2406assignment_beta/MountSheridanStationCNS.csv");
         } catch (IOException err) {
             System.out.println("Something went wrong");
             System.out.println(err.getMessage());
@@ -68,45 +62,56 @@ public class Main extends Application {
         Tooltip.install(quitButton, quitTooltip);
 
         // Set up the first root and scene
-        BorderPane root = new BorderPane();
-        root.setCenter(message);
-        root.setBottom(buttonBar);
+        BorderPane homeRoot = new BorderPane();
+        homeRoot.setCenter(message);
+        homeRoot.setBottom(buttonBar);
+        homeRoot.setStyle("-fx-border-width: 3px; -fx-border-color: #444");
 
-        Scene homeScene = new Scene(root, 600, 600);
+        homeScene = new Scene(homeRoot, 600, 600);
         stage.setScene(homeScene);
         stage.setTitle("CP2406 Assignment - Samuel Healion");
+        stage.centerOnScreen();
 
 
-        startButton.setOnAction(e -> {
-//            BorderPane visualiserRoot = new BorderPane(RainfallVisualiser.getCanvas(rainfallData));
-            BorderPane visualiserRoot = new BorderPane(RainfallVisualiser.getRainfallBarChart(rainfallData));
-            Button returnButton = new Button("Close Visualiser");
-
-            HBox visualiserHBox = new HBox(returnButton);
-            visualiserHBox.setAlignment(Pos.CENTER);
-
-            visualiserRoot.setBottom(visualiserHBox);
-            visualiserRoot.setStyle("-fx-border-width: 4px; -fx-border-color: #444");
-            Scene visualiserScene = new Scene(visualiserRoot, 1200, 600);
-            stage.setScene(visualiserScene);
-            stage.setTitle("Rainfall Visualiser");
-
-            returnButton.setOnAction(actionEvent -> stage.setScene(homeScene));
-        } );
-        loadButton.setOnAction(e -> rainfallData = loadRainfallData());
+        startButton.setOnAction(e -> buildRainfallVisualiserStage(stage));
+        loadButton.setOnAction(e -> rainfallData = loadRainfallData(stage));
         quitButton.setOnAction(e -> Platform.exit());
 
         stage.show();
     }
 
-    private RainfallData loadRainfallData() {
+    /**
+     * Creates the Stage for the Rainfall Visualiser.
+     * Get the StackedBarChart from the Rainfall Visualiser class
+     */
+    private void buildRainfallVisualiserStage(Stage stage) {
+        BorderPane visualiserRoot = new BorderPane(RainfallVisualiser.getRainfallBarChart(rainfallData));
+        Button returnButton = new Button("Close Visualiser");
+
+        HBox visualiserHBox = new HBox(returnButton);
+        visualiserHBox.setAlignment(Pos.CENTER);
+
+        visualiserRoot.setBottom(visualiserHBox);
+        visualiserRoot.setStyle("-fx-border-width: 5px; -fx-border-color: GRAY");
+        Scene visualiserScene = new Scene(visualiserRoot, 1200, 600);
+        stage.setScene(visualiserScene);
+        stage.setTitle("Rainfall Visualiser");
+        stage.centerOnScreen();
+
+        returnButton.setOnAction(actionEvent -> {
+            stage.setScene(homeScene);
+            stage.centerOnScreen();
+        });
+    }
+
+    private RainfallData loadRainfallData(Stage stage) {
         FileChooser chooser = new FileChooser();
-        File file = chooser.showOpenDialog(homeStage);
+        File file = chooser.showOpenDialog(stage);
         String path = file.getAbsolutePath();
 
         RainfallAnalyser rainfallAnalyser = new RainfallAnalyser();
         try {
-            rainfallData = rainfallAnalyser.analyseDataSet(path);
+            rainfallData = rainfallAnalyser.analyseRainfallData(path);
         } catch (IOException err) {
             System.out.println("Something went wrong");
             System.out.println(err.getMessage());

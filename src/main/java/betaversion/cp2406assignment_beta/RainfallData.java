@@ -5,7 +5,7 @@ import java.util.ArrayList;
 /**
  * CP2406 Assignment - Samuel Healion
  * RainfallData is used as an array of MonthRainfallData objects.
- * Includes a number of methods to analyse the full data set.
+ * Includes methods to analyse the full rainfall data.
  */
 public class RainfallData {
 
@@ -60,7 +60,8 @@ public class RainfallData {
             }
         }
         return ("Rainfall data from " + firstMonth + "/" + firstYear + " to " + lastMonth + "/" + lastYear);
-    }
+
+    } // end getDateRange()
 
     /**
      * Get the total recorded rainfall over the entire recorded rainfall.
@@ -100,4 +101,5 @@ public class RainfallData {
         }
         return maxRainfall;
     }
-}
+
+} // End RainfallData
