@@ -16,6 +16,7 @@ public class RainfallAnalyser {
 
     public RainfallData analyseRainfallData(String path) throws IOException, NumberFormatException {
         RainfallData newRainfallData = new RainfallData();
+        newRainfallData.setFilename(path);
         Reader reader = new FileReader(path);
         Iterable<CSVRecord> records = CSVFormat.DEFAULT.withHeader().parse(reader);
         int year, month, day;
@@ -80,7 +81,19 @@ public class RainfallAnalyser {
     } // end analyseRainfallData()
 
     public void saveRainfallData(RainfallData rainfallData) {
-
+        if (rainfallData.getFilename() == null) {
+            System.out.println("No file loaded to save");
+            return;
+        }
+        String savePath = "src/main/resources/betaversion/cp2406assignment_beta/analysedrainfalldata/" + rainfallData.getFilename() + "_analysed";
+        TextIO.writeFile(savePath);
+        TextIO.putln("year,month,total,minimum,maximum");
+        for (MonthRainfallData monthRainfallData : rainfallData.getRainfallData()) {
+            TextIO.putf("%d,%d,%1.2f,%1.2f,%1.2f\n",
+                    monthRainfallData.getYear(), monthRainfallData.getMonth(), monthRainfallData.getTotal(),
+                    monthRainfallData.getMin(), monthRainfallData.getMax());
+        }
+        System.out.println("Successfully saved rainfall data.");
     }
 
 } // end RainfallAnalyser

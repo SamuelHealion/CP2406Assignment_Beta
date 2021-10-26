@@ -1,5 +1,6 @@
 package betaversion.cp2406assignment_beta;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 public class RainfallData {
 
     private final ArrayList<MonthRainfallData> totalRainfallData = new ArrayList<>();
+    private String filename = null;
 
     /**
      * Add a single months' rainfall data to the array created by the RainfallData Object.
@@ -100,6 +102,16 @@ public class RainfallData {
                 maxRainfall = monthRainfallData.getMax();
         }
         return maxRainfall;
+    }
+
+    public void setFilename(String path) {
+        File file = new File(path);
+        String[] filenameElements = file.getName().trim().split("\\.");
+        filename = filenameElements[0];
+    }
+
+    public String getFilename() {
+        return filename;
     }
 
 } // End RainfallData
