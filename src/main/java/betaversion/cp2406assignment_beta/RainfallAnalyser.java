@@ -104,12 +104,12 @@ public class RainfallAnalyser {
         return rainfallData;
     }
 
-    public void saveRainfallData(RainfallData rainfallData) {
+    public String saveRainfallData(RainfallData rainfallData) {
         if (rainfallData.getFilename() == null) {
             System.out.println("No file loaded to save");
-            return;
+            return null;
         }
-        String savePath = "src/main/resources/betaversion/cp2406assignment_beta/analysedrainfalldata/" + rainfallData.getFilename() + "_Analysed";
+        String savePath = "src/main/resources/betaversion/cp2406assignment_beta/analysedrainfalldata/" + rainfallData.getFilename();
         TextIO.writeFile(savePath);
         TextIO.putln("year,month,total,minimum,maximum");
         for (MonthRainfallData monthRainfallData : rainfallData.getRainfallData()) {
@@ -117,9 +117,7 @@ public class RainfallAnalyser {
                     monthRainfallData.getYear(), monthRainfallData.getMonth(), monthRainfallData.getTotal(),
                     monthRainfallData.getMin(), monthRainfallData.getMax());
         }
-        System.out.println("Successfully saved rainfall data.");
-    }
-
-
+        return rainfallData.getFilename();
+    } // end saveRainfallData
 
 } // end RainfallAnalyser

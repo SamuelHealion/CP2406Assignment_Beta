@@ -36,12 +36,17 @@ public class Main extends Application {
 
         // Build the homeScene. Don't need to build the visualiserScene until it is called.
         buildHomeScene();
+        statusBar.setText("Please load a rainfall csv to be analysed");
 
         // Set the stage to the Home Scene and show it
         setPrimaryStage(homeScene);
         primaryStage.show();
     }
 
+    /**
+     * Set which scene is being displayed on the PrimaryStage
+     * Adjusts Resizability and centers the window each time.
+     */
     private void setPrimaryStage(Scene newScene) {
         if (newScene == homeScene) {
             primaryStage.setScene(homeScene);
@@ -53,14 +58,15 @@ public class Main extends Application {
             primaryStage.setTitle("Rainfall Visualiser");
             primaryStage.centerOnScreen();
             primaryStage.setResizable(true);
-    }
+    } // end setPrimaryStage
 
+    /**
+     * Builds the Scene used for the Home Scene
+     */
     private void buildHomeScene() {
-
         // Set up all the labels and put them in a VBox
         Label message = new Label("Welcome to the Rainfall Visualiser");
         message.setFont(new Font(20));
-        statusBar.setText("Please load a rainfall csv to be analysed");
         VBox labelBar = new VBox(message, statusBar);
         labelBar.setAlignment(Pos.CENTER);
 
@@ -69,10 +75,6 @@ public class Main extends Application {
         Button loadButton = new Button("Load Rainfall Data");
         Button quitButton = new Button("Quit");
 
-        HBox buttonBar = new HBox(50, startButton, loadButton, quitButton);
-        buttonBar.setAlignment(Pos.CENTER);
-        buttonBar.setPrefHeight(50);
-
         Tooltip startTooltip = new Tooltip(), loadTooltip = new Tooltip(), quitTooltip = new Tooltip();
         startTooltip.setText("Starts the Rainfall Visualiser");
         Tooltip.install(startButton, startTooltip);
@@ -80,6 +82,10 @@ public class Main extends Application {
         Tooltip.install(loadButton, loadTooltip);
         quitTooltip.setText("Exits the Rainfall Visualiser");
         Tooltip.install(quitButton, quitTooltip);
+
+        HBox buttonBar = new HBox(50, startButton, loadButton, quitButton);
+        buttonBar.setAlignment(Pos.CENTER);
+        buttonBar.setPrefHeight(50);
 
         MenuButton menuButton = buildMenuButton();
         MenuBar menuBar = buildMenuBar();
@@ -103,34 +109,6 @@ public class Main extends Application {
 
     }
 
-    private MenuButton buildMenuButton() {
-        MenuButton analysedList = new MenuButton();
-        analysedList.setText("Saved Rainfall Data");
-        analysedList.setAlignment(Pos.CENTER);
-
-        File f = new File("src/main/resources/betaversion/cp2406assignment_beta/analysedrainfalldata");
-        if (Objects.requireNonNull(f.list()).length == 0) {
-            MenuItem noData = new MenuItem("No saved analysed rainfall data");
-            analysedList.getItems().add(noData);
-        } else {
-            for (String filename : Objects.requireNonNull(f.list())) {
-                MenuItem choice = new MenuItem(filename);
-                choice.setOnAction(e -> {
-                    String path = f.getAbsolutePath() + "\\" + filename;
-                    try {
-                        rainfallData = rainfallAnalyser.getAnalysedRainfallData(path);
-                        buildRainfallVisualiserScene();
-                    } catch (IOException ex) {
-                        System.out.println(ex.getMessage());
-                        ex.printStackTrace();
-                    }
-                });
-                analysedList.getItems().add(choice);
-            }
-        }
-        return analysedList;
-    } // end buildMenuButton
-
     /**
      * Creates the Stage for the Rainfall Visualiser.
      * Get the StackedBarChart from the Rainfall Visualiser class
@@ -152,6 +130,37 @@ public class Main extends Application {
         returnButton.setOnAction(actionEvent -> setPrimaryStage(homeScene));
     }
 
+
+
+    private MenuButton buildMenuButton() {
+        MenuButton analysedList = new MenuButton();
+        analysedList.setText("Saved Rainfall Data");
+        analysedList.setAlignment(Pos.CENTER);
+
+        File f = new File("src/main/resources/betaversion/cp2406assignment_beta/analysedrainfalldata");
+        if (Objects.requireNonNull(f.list()).length == 0) {
+            MenuItem noData = new MenuItem("No saved analysed rainfall data");
+            analysedList.getItems().add(noData);
+        } else {
+            for (String filename : Objects.requireNonNull(f.list())) {
+                MenuItem choice = new MenuItem(filename);
+                choice.setOnAction(e -> {
+                    String path = f.getAbsolutePath() + "\\" + filename;
+                    try {
+                        rainfallData = rainfallAnalyser.getAnalysedRainfallData(path);
+                        buildRainfallVisualiserScene();
+                        statusBar.setText(filename + " successfully loaded");
+                    } catch (IOException ex) {
+                        System.out.println(ex.getMessage());
+                        ex.printStackTrace();
+                    }
+                });
+                analysedList.getItems().add(choice);
+            }
+        }
+        return analysedList;
+    } // end buildMenuButton
+
     private MenuBar buildMenuBar() {
         Menu fileMenu = new Menu("File");
         Menu helpMenu = new Menu("Help");
@@ -169,8 +178,11 @@ public class Main extends Application {
 
         MenuItem save = new MenuItem("Save");
         save.setOnAction(e -> {
-            rainfallAnalyser.saveRainfallData(rainfallData);
-            statusBar.setText(rainfallData.getFilename() + " successfully saved");
+            String filename = rainfallAnalyser.saveRainfallData(rainfallData);
+            if (filename == null)
+                statusBar.setText("No file loaded to save");
+            else
+                statusBar.setText(filename + " successfully saved");
         });
 
         MenuItem close = new MenuItem("Close");
