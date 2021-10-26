@@ -14,16 +14,16 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 
 public class Main extends Application {
 
     private static RainfallData rainfallData = new RainfallData();
-    private final RainfallAnalyser rainfallAnalyser = new RainfallAnalyser();
+    private static final RainfallAnalyser rainfallAnalyser = new RainfallAnalyser();
 
     private final Stage primaryStage = new Stage();
     private Scene homeScene;
     private Scene visualiserScene;
-    private final MenuBar menuBar = new MenuBar();
     private final Label statusBar = new Label();
 
     /**
@@ -34,8 +34,7 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) {
 
-        // Build the menuBar and homeScene. Don't need to build the visualiserScene until it is called.
-        buildMenuBar();
+        // Build the homeScene. Don't need to build the visualiserScene until it is called.
         buildHomeScene();
 
         // Set the stage to the Home Scene and show it
@@ -50,7 +49,6 @@ public class Main extends Application {
             primaryStage.centerOnScreen();
             primaryStage.setResizable(false);
         } else if (newScene == visualiserScene)
-//            buildRainfallVisualiserScene();
             primaryStage.setScene(visualiserScene);
             primaryStage.setTitle("Rainfall Visualiser");
             primaryStage.centerOnScreen();
@@ -83,10 +81,14 @@ public class Main extends Application {
         quitTooltip.setText("Exits the Rainfall Visualiser");
         Tooltip.install(quitButton, quitTooltip);
 
+        MenuButton menuButton = buildMenuButton();
+        MenuBar menuBar = buildMenuBar();
+
         // Set up the home root and scene
         BorderPane homeRoot = new BorderPane();
         homeRoot.setCenter(labelBar);
         homeRoot.setBottom(buttonBar);
+        homeRoot.setRight(menuButton);
         homeRoot.setTop(menuBar);
         homeRoot.setStyle("-fx-border-width: 2px; -fx-border-color: #444");
 
@@ -101,6 +103,34 @@ public class Main extends Application {
 
     }
 
+    private MenuButton buildMenuButton() {
+        MenuButton analysedList = new MenuButton();
+        analysedList.setText("Saved Rainfall Data");
+        analysedList.setAlignment(Pos.CENTER);
+
+        File f = new File("src/main/resources/betaversion/cp2406assignment_beta/analysedrainfalldata");
+        if (Objects.requireNonNull(f.list()).length == 0) {
+            MenuItem noData = new MenuItem("No saved analysed rainfall data");
+            analysedList.getItems().add(noData);
+        } else {
+            for (String filename : Objects.requireNonNull(f.list())) {
+                MenuItem choice = new MenuItem(filename);
+                choice.setOnAction(e -> {
+                    String path = f.getAbsolutePath() + "\\" + filename;
+                    try {
+                        rainfallData = rainfallAnalyser.getAnalysedRainfallData(path);
+                        buildRainfallVisualiserScene();
+                    } catch (IOException ex) {
+                        System.out.println(ex.getMessage());
+                        ex.printStackTrace();
+                    }
+                });
+                analysedList.getItems().add(choice);
+            }
+        }
+        return analysedList;
+    } // end buildMenuButton
+
     /**
      * Creates the Stage for the Rainfall Visualiser.
      * Get the StackedBarChart from the Rainfall Visualiser class
@@ -112,6 +142,8 @@ public class Main extends Application {
         HBox visualiserHBox = new HBox(returnButton);
         visualiserHBox.setAlignment(Pos.CENTER);
 
+        MenuBar menuBar = buildMenuBar();
+
         visualiserRoot.setTop(menuBar);
         visualiserRoot.setBottom(visualiserHBox);
         visualiserRoot.setStyle("-fx-border-width: 2px; -fx-border-color: GRAY");
@@ -120,9 +152,10 @@ public class Main extends Application {
         returnButton.setOnAction(actionEvent -> setPrimaryStage(homeScene));
     }
 
-    private void buildMenuBar() {
+    private MenuBar buildMenuBar() {
         Menu fileMenu = new Menu("File");
         Menu helpMenu = new Menu("Help");
+        MenuBar menuBar = new MenuBar();
         menuBar.getMenus().addAll(fileMenu, helpMenu);
 
         MenuItem open = new MenuItem("Open");
@@ -135,12 +168,17 @@ public class Main extends Application {
         });
 
         MenuItem save = new MenuItem("Save");
-        save.setOnAction(e -> rainfallAnalyser.saveRainfallData(rainfallData));
+        save.setOnAction(e -> {
+            rainfallAnalyser.saveRainfallData(rainfallData);
+            statusBar.setText(rainfallData.getFilename() + " successfully saved");
+        });
 
         MenuItem close = new MenuItem("Close");
         close.setOnAction(e -> Platform.exit());
 
         fileMenu.getItems().addAll(open, save, close);
+
+        return menuBar;
     }
 
     private RainfallData loadRainfallData() {

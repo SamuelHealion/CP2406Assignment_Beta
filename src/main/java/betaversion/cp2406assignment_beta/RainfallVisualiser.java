@@ -32,7 +32,9 @@ public class RainfallVisualiser {
         maxs.setName("Maximum Rainfall");
 
         // Change aesthetic settings of the StackedBarChart
-        rainfallChart.setTitle(rainfallData.getDateRange());
+        if (rainfallData.getFilename() == null) {
+            rainfallChart.setTitle("No data loaded");
+        } else rainfallChart.setTitle(rainfallData.getDateRange());
         rainfallChart.setCategoryGap(0.0);
         rainfallChart.setVerticalGridLinesVisible(false);
         rainfallChart.setHorizontalGridLinesVisible(false);

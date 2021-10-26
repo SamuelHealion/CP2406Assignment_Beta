@@ -3,6 +3,7 @@ package betaversion.cp2406assignment_beta;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
@@ -80,12 +81,35 @@ public class RainfallAnalyser {
 
     } // end analyseRainfallData()
 
+
+    /**
+     * Creates a RainfallData object from a previously analysed file
+     */
+    public RainfallData getAnalysedRainfallData(String path) throws IOException {
+        RainfallData rainfallData = new RainfallData();
+        rainfallData.setFilename(path);
+        Reader reader = new FileReader(path);
+        Iterable<CSVRecord> records = CSVFormat.DEFAULT.withHeader().parse(reader);
+
+        for (CSVRecord record: records) {
+
+            int year = Integer.parseInt(record.get("year"));
+            int month = Integer.parseInt(record.get("month"));
+            double total = Double.parseDouble(record.get("total"));
+            double min = Double.parseDouble(record.get("minimum"));
+            double max = Double.parseDouble(record.get("maximum"));
+
+            rainfallData.addRainfallData(total, min, max, month, year);
+        }
+        return rainfallData;
+    }
+
     public void saveRainfallData(RainfallData rainfallData) {
         if (rainfallData.getFilename() == null) {
             System.out.println("No file loaded to save");
             return;
         }
-        String savePath = "src/main/resources/betaversion/cp2406assignment_beta/analysedrainfalldata/" + rainfallData.getFilename() + "_analysed";
+        String savePath = "src/main/resources/betaversion/cp2406assignment_beta/analysedrainfalldata/" + rainfallData.getFilename() + "_Analysed";
         TextIO.writeFile(savePath);
         TextIO.putln("year,month,total,minimum,maximum");
         for (MonthRainfallData monthRainfallData : rainfallData.getRainfallData()) {
@@ -95,5 +119,7 @@ public class RainfallAnalyser {
         }
         System.out.println("Successfully saved rainfall data.");
     }
+
+
 
 } // end RainfallAnalyser
