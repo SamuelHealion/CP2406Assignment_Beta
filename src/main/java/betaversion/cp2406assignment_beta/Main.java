@@ -22,10 +22,9 @@ public class Main extends Application {
     private static RainfallData rainfallData = new RainfallData();
     private static final RainfallAnalyser rainfallAnalyser = new RainfallAnalyser();
 
-    private final Stage primaryStage = new Stage();
+    private final Stage homeStage = new Stage();
+    private final Stage visualiserStage = new Stage();
     private final Stage helpStage = new Stage();
-    private Scene homeScene;
-    private Scene visualiserScene;
     private final Label statusBar = new Label();
 
     /**
@@ -36,37 +35,20 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) {
 
-        // Build the homeScene. Don't need to build the visualiserScene until it is called.
-        buildHomeScene();
+        // Build the stages to be used in the program
+        buildHomeStage();
+        buildVisualiserStage();
         buildHelpStage();
         statusBar.setText("Please load a rainfall csv to be analysed");
 
         // Set the stage to the Home Scene and show it
-        setPrimaryStage(homeScene);
-        primaryStage.show();
+        homeStage.show();
     }
-
-    /**
-     * Set which scene is being displayed on the PrimaryStage
-     * Adjusts Resizability and centers the window each time.
-     */
-    private void setPrimaryStage(Scene newScene) {
-        if (newScene == homeScene) {
-            primaryStage.setScene(homeScene);
-            primaryStage.setTitle("CP2406 Assignment - Samuel Healion");
-            primaryStage.centerOnScreen();
-            primaryStage.setResizable(false);
-        } else if (newScene == visualiserScene)
-            primaryStage.setScene(visualiserScene);
-            primaryStage.setTitle("Rainfall Visualiser");
-            primaryStage.centerOnScreen();
-            primaryStage.setResizable(true);
-    } // end setPrimaryStage
 
     /**
      * Builds the Scene used for the Home Scene
      */
-    private void buildHomeScene() {
+    private void buildHomeStage() {
         // Set up all the labels and put them in a VBox
         Label message = new Label("Welcome to the Rainfall Visualiser");
         message.setFont(new Font(20));
@@ -102,22 +84,25 @@ public class Main extends Application {
         homeRoot.setTop(menuBar);
         homeRoot.setStyle("-fx-border-width: 2px; -fx-border-color: #444");
 
-        homeScene = new Scene(homeRoot, 600, 600);
+        Scene homeScene = new Scene(homeRoot, 600, 600);
+        homeStage.setScene(homeScene);
+        homeStage.setTitle("CP2406 Assignment - Samuel Healion");
+        homeStage.centerOnScreen();
+        homeStage.setResizable(false);
 
         startButton.setOnAction(e -> {
-            buildRainfallVisualiserScene();
-            setPrimaryStage(visualiserScene);
+            homeStage.hide();
+            visualiserStage.show();
         });
         loadButton.setOnAction(e -> rainfallData = loadRainfallData());
         quitButton.setOnAction(e -> Platform.exit());
-
     }
 
     /**
      * Creates the Stage for the Rainfall Visualiser.
      * Get the StackedBarChart from the Rainfall Visualiser class
      */
-    private void buildRainfallVisualiserScene() {
+    private void buildVisualiserStage() {
         BorderPane visualiserRoot = new BorderPane(RainfallVisualiser.getRainfallBarChart(rainfallData));
         Button returnButton = new Button("Close Visualiser");
 
@@ -129,9 +114,17 @@ public class Main extends Application {
         visualiserRoot.setTop(menuBar);
         visualiserRoot.setBottom(visualiserHBox);
         visualiserRoot.setStyle("-fx-border-width: 2px; -fx-border-color: GRAY");
-        visualiserScene = new Scene(visualiserRoot, 1200, 600);
+        Scene visualiserScene = new Scene(visualiserRoot, 1200, 600);
 
-        returnButton.setOnAction(actionEvent -> setPrimaryStage(homeScene));
+        visualiserStage.setScene(visualiserScene);
+        visualiserStage.setTitle("Rainfall Visualiser");
+        visualiserStage.centerOnScreen();
+        visualiserStage.setResizable(true);
+
+        returnButton.setOnAction(actionEvent -> {
+            visualiserStage.hide();
+            homeStage.show();
+        });
     }
 
     private void buildHelpStage() {
@@ -232,7 +225,7 @@ public class Main extends Application {
                     String path = f.getAbsolutePath() + "\\" + filename;
                     try {
                         rainfallData = rainfallAnalyser.getAnalysedRainfallData(path);
-                        buildRainfallVisualiserScene();
+                        buildVisualiserStage();
                         statusBar.setText(filename + " successfully loaded");
                     } catch (IOException ex) {
                         System.out.println(ex.getMessage());
@@ -252,13 +245,7 @@ public class Main extends Application {
         menuBar.getMenus().addAll(fileMenu, helpMenu);
 
         MenuItem open = new MenuItem("Open");
-        open.setOnAction(e -> {
-            loadRainfallData();
-            if (primaryStage.getScene().equals(visualiserScene)) {
-                buildRainfallVisualiserScene();
-                setPrimaryStage(visualiserScene);
-            }
-        });
+        open.setOnAction(e -> loadRainfallData());
 
         MenuItem save = new MenuItem("Save");
         save.setOnAction(e -> {
@@ -283,12 +270,13 @@ public class Main extends Application {
 
     private RainfallData loadRainfallData() {
         FileChooser chooser = new FileChooser();
-        File file = chooser.showOpenDialog(primaryStage);
+        File file = chooser.showOpenDialog(homeStage);
         String path = file.getAbsolutePath();
 
         try {
             rainfallData = rainfallAnalyser.analyseRainfallData(path);
             statusBar.setText(rainfallData.getFilename() + " successfully loaded");
+            buildVisualiserStage();
         } catch (Exception err) {
             statusBar.setText("Failed to load " + file.getName() + "\n" +
                     err.getMessage());
