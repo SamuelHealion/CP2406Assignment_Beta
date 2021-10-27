@@ -17,6 +17,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
+/**
+ * CP2406 Assignment - Samuel Healion
+ * Beta version the assignment. Main Class to be run which uses the Rainfall Visualiser/Analyser classes.
+ * Creates an interactive app using JavaFX.
+ */
 public class Main extends Application {
 
     private static RainfallData rainfallData = new RainfallData();
@@ -32,6 +37,10 @@ public class Main extends Application {
      */
     public static void main(String[] args) { launch(args); }
 
+    /**
+     * Main JavaFX method. Overrides the original method of the JavaFX package.
+     * Builds the three main stages of the app.
+     */
     @Override
     public void start(Stage stage) {
 
@@ -46,7 +55,7 @@ public class Main extends Application {
     }
 
     /**
-     * Builds the Scene used for the Home Scene
+     * Builds the stage used for the Home Stage
      */
     private void buildHomeStage() {
         // Set up all the labels and put them in a VBox
@@ -61,6 +70,7 @@ public class Main extends Application {
         Button loadButton = new Button("Load Rainfall Data");
         Button quitButton = new Button("Quit");
 
+        // Add tooltips to each of the main buttons
         Tooltip startTooltip = new Tooltip(), loadTooltip = new Tooltip(), quitTooltip = new Tooltip();
         startTooltip.setText("Starts the Rainfall Visualiser");
         Tooltip.install(startButton, startTooltip);
@@ -68,6 +78,14 @@ public class Main extends Application {
         Tooltip.install(loadButton, loadTooltip);
         quitTooltip.setText("Exits the Rainfall Visualiser");
         Tooltip.install(quitButton, quitTooltip);
+
+        // Assign the actions to each of the main buttons
+        startButton.setOnAction(e -> {
+            homeStage.hide();
+            visualiserStage.show();
+        });
+        loadButton.setOnAction(e -> rainfallData = loadRainfallData());
+        quitButton.setOnAction(e -> Platform.exit());
 
         HBox buttonBar = new HBox(50, startButton, loadButton, quitButton);
         buttonBar.setAlignment(Pos.CENTER);
@@ -84,18 +102,12 @@ public class Main extends Application {
         homeRoot.setTop(menuBar);
         homeRoot.setStyle("-fx-border-width: 2px; -fx-border-color: #444");
 
-        Scene homeScene = new Scene(homeRoot, 600, 600);
+        // Build the home scene and assign it to the home stage
+        Scene homeScene = new Scene(homeRoot, 600, 400);
         homeStage.setScene(homeScene);
         homeStage.setTitle("CP2406 Assignment - Samuel Healion");
         homeStage.centerOnScreen();
         homeStage.setResizable(false);
-
-        startButton.setOnAction(e -> {
-            homeStage.hide();
-            visualiserStage.show();
-        });
-        loadButton.setOnAction(e -> rainfallData = loadRainfallData());
-        quitButton.setOnAction(e -> Platform.exit());
     }
 
     /**
@@ -127,6 +139,10 @@ public class Main extends Application {
         });
     }
 
+    /**
+     * Builds the help stage. Used to give the user basic instructions
+     * on running the app.
+     */
     private void buildHelpStage() {
         TabPane helpPane = new TabPane();
         helpPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
@@ -195,20 +211,24 @@ public class Main extends Application {
         VBox helpBox = new VBox(helpPane, close);
         helpBox.setAlignment(Pos.CENTER);
 
-        Scene helpScene = new Scene(helpBox, 400, 300);
+        Scene helpScene = new Scene(helpBox, 400, 350);
         helpStage.setScene(helpScene);
         helpStage.setTitle("Help for Rainfall Visualiser");
         helpStage.setResizable(false);
         helpStage.initStyle(StageStyle.UTILITY);
 
+        // Closes the help screen when focus is lost from the home stage
         helpStage.focusedProperty().addListener( (obj,oldVal,newVal) -> {
             if (!newVal) {
                 helpStage.hide();
             }
         });
-
     } // end buildHelpStage()
 
+    /**
+     * Build the menu button for the home stage
+     * Is used to load in previously saved and analysed Rainfall data files.
+     */
     private MenuButton buildMenuButton() {
         MenuButton analysedList = new MenuButton();
         analysedList.setText("Saved Rainfall Data");
@@ -228,8 +248,8 @@ public class Main extends Application {
                         buildVisualiserStage();
                         statusBar.setText(filename + " successfully loaded");
                     } catch (IOException ex) {
-                        System.out.println(ex.getMessage());
-                        ex.printStackTrace();
+                        // Because these files are created by the program, this error shouldn't occur
+                        statusBar.setText(filename + " failed to load.\n " + ex.getMessage());
                     }
                 });
                 analysedList.getItems().add(choice);
@@ -238,6 +258,12 @@ public class Main extends Application {
         return analysedList;
     } // end buildMenuButton
 
+    /**
+     * Build the menu bar for the Home stage and the Visualiser Stage.
+     * Acts as the only way to change the Rainfall data set while on
+     * the visualiser stage. Can also be used to load the help stage
+     * or close the app on any stage.
+     */
     private MenuBar buildMenuBar() {
         Menu fileMenu = new Menu("File");
         Menu helpMenu = new Menu("Help");
@@ -268,6 +294,13 @@ public class Main extends Application {
         return menuBar;
     }
 
+    /**
+     * Opens up a file explorer menu and lets the user load in a csv rainfall file
+     * for analysis.
+     * Responsible for catching any errors thrown by the RainfallAnalyser class.
+     * Returns the analysed data set to be represented by the bar chart on the
+     * visualiser stage. Updates the visualiser stage each time it is run.
+     */
     private RainfallData loadRainfallData() {
         FileChooser chooser = new FileChooser();
         File file = chooser.showOpenDialog(homeStage);
@@ -281,7 +314,6 @@ public class Main extends Application {
             statusBar.setText("Failed to load " + file.getName() + "\n" +
                     err.getMessage());
         }
-
         return rainfallData;
     } // end loadRainfallData()
 
