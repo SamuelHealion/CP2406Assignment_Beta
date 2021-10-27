@@ -2,6 +2,9 @@ package betaversion.cp2406assignment_beta;
 
 import java.io.IOException;
 
+/**
+ * Class used to test the basic classes that are used in the Main program.
+ */
 public class ClassTester {
     public static void main(String[] args) {
 
@@ -30,10 +33,10 @@ public class ClassTester {
 
         // Tests for RainfallAnalyser class
         System.out.println("\nTests for RainfallAnalyser class");
-        RainfallAnalyser analysedRainfallData = new RainfallAnalyser();
+        RainfallAnalyser rainfallAnalyser = new RainfallAnalyser();
         RainfallData testRainfallData = new RainfallData();
         try {
-            testRainfallData = analysedRainfallData.analyseRainfallData("src/main/resources/betaversion/cp2406assignment_beta/IDCJAC0009_031205_1800_Data.csv");
+            testRainfallData = rainfallAnalyser.analyseRainfallData("src/main/resources/betaversion/cp2406assignment_beta/rainfalldata/IDCJAC0009_031205_1800_Data.csv");
             System.out.println("Successfully loaded the data");
         } catch (IOException err) {
             System.out.println("Something went wrong");

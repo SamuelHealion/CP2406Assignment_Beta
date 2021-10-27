@@ -31,6 +31,7 @@ public class Main extends Application {
     private final Stage visualiserStage = new Stage();
     private final Stage helpStage = new Stage();
     private final Label statusBar = new Label();
+    private MenuButton analysedList = new MenuButton();
 
     /**
      * Main method that starts the application
@@ -91,14 +92,14 @@ public class Main extends Application {
         buttonBar.setAlignment(Pos.CENTER);
         buttonBar.setPrefHeight(50);
 
-        MenuButton menuButton = buildMenuButton();
+        buildMenuButton();
         MenuBar menuBar = buildMenuBar();
 
         // Set up the home root and scene
         BorderPane homeRoot = new BorderPane();
         homeRoot.setCenter(labelBar);
         homeRoot.setBottom(buttonBar);
-        homeRoot.setRight(menuButton);
+        homeRoot.setRight(analysedList);
         homeRoot.setTop(menuBar);
         homeRoot.setStyle("-fx-border-width: 2px; -fx-border-color: #444");
 
@@ -188,9 +189,7 @@ public class Main extends Application {
 
                 This feature was included to prevent the user from having to
                 manually find a file each time they wanted to view the graph
-                in the visualiser. It is important to note that no saved data
-                will appear in the list until the app is closed and then
-                launched again.""");
+                in the visualiser.""");
         Label visualiserHelp = new Label("""
                 The visualiser represents the currently loaded rainfall data
                 as a bar chart. The user can hover their cursor over the bar
@@ -229,15 +228,15 @@ public class Main extends Application {
      * Build the menu button for the home stage
      * Is used to load in previously saved and analysed Rainfall data files.
      */
-    private MenuButton buildMenuButton() {
-        MenuButton analysedList = new MenuButton();
-        analysedList.setText("Saved Rainfall Data");
-        analysedList.setAlignment(Pos.CENTER);
+    private void buildMenuButton() {
+        MenuButton menuButton = new MenuButton();
+        menuButton.setText("Saved Rainfall Data");
+        menuButton.setAlignment(Pos.CENTER);
 
         File f = new File("src/main/resources/betaversion/cp2406assignment_beta/analysedrainfalldata");
         if (Objects.requireNonNull(f.list()).length == 0) {
             MenuItem noData = new MenuItem("No saved analysed rainfall data");
-            analysedList.getItems().add(noData);
+            menuButton.getItems().add(noData);
         } else {
             for (String filename : Objects.requireNonNull(f.list())) {
                 MenuItem choice = new MenuItem(filename);
@@ -252,10 +251,10 @@ public class Main extends Application {
                         statusBar.setText(filename + " failed to load.\n " + ex.getMessage());
                     }
                 });
-                analysedList.getItems().add(choice);
+                menuButton.getItems().add(choice);
             }
         }
-        return analysedList;
+        analysedList = menuButton;
     } // end buildMenuButton
 
     /**
@@ -276,6 +275,7 @@ public class Main extends Application {
         MenuItem save = new MenuItem("Save");
         save.setOnAction(e -> {
             String filename = rainfallAnalyser.saveRainfallData(rainfallData);
+            buildMenuButton();
             if (filename == null)
                 statusBar.setText("No file loaded to save");
             else

@@ -115,7 +115,6 @@ public class RainfallAnalyser {
 
     public String saveRainfallData(RainfallData rainfallData) {
         if (rainfallData.getFilename() == null) {
-            System.out.println("No file loaded to save");
             return null;
         }
         String savePath = "src/main/resources/betaversion/cp2406assignment_beta/analysedrainfalldata/" + rainfallData.getFilename();
