@@ -11,6 +11,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,6 +23,7 @@ public class Main extends Application {
     private static final RainfallAnalyser rainfallAnalyser = new RainfallAnalyser();
 
     private final Stage primaryStage = new Stage();
+    private final Stage helpStage = new Stage();
     private Scene homeScene;
     private Scene visualiserScene;
     private final Label statusBar = new Label();
@@ -36,6 +38,7 @@ public class Main extends Application {
 
         // Build the homeScene. Don't need to build the visualiserScene until it is called.
         buildHomeScene();
+        buildHelpStage();
         statusBar.setText("Please load a rainfall csv to be analysed");
 
         // Set the stage to the Home Scene and show it
@@ -67,6 +70,7 @@ public class Main extends Application {
         // Set up all the labels and put them in a VBox
         Label message = new Label("Welcome to the Rainfall Visualiser");
         message.setFont(new Font(20));
+        statusBar.setAlignment(Pos.CENTER);
         VBox labelBar = new VBox(message, statusBar);
         labelBar.setAlignment(Pos.CENTER);
 
@@ -130,7 +134,87 @@ public class Main extends Application {
         returnButton.setOnAction(actionEvent -> setPrimaryStage(homeScene));
     }
 
+    private void buildHelpStage() {
+        TabPane helpPane = new TabPane();
+        helpPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
+        helpPane.setTabDragPolicy(TabPane.TabDragPolicy.FIXED);
+        helpPane.setStyle("-fx-border-width: 2px; -fx-border-color: GRAY");
 
+        Label generalHelp = new Label("""
+                Welcome to the Rainfall visualiser app.
+                
+                This app will analyse a Comma Separated Value (CSV) file and
+                give the recorded rainfall data as a bar chart on the
+                visualiser screen.
+                
+                This app was designed for the subject CP2406 at JCU by
+                Samuel Healion.
+                
+                It makes use of the Commons CSV package from Apache.
+                
+                Please select a specific tab if you need a more detailed
+                explanation.""");
+        Label loadingHelp = new Label("""
+                There are three ways to load a file into the Rainfall Visualiser.
+
+                The first is to use the load option from the top of the app.
+                This will open up a file explorer window and allows the user
+                to enter a new file to be analysed and then represented with
+                a graph on the visualiser. This option is available from both
+                the home screen and the visualiser screen.
+
+                The second is by clicking the button on the home screen. This
+                also opens up the file explorer to load in a new file.
+
+                The third is from the drop down list on the left of the home
+                screen. This is a list of previously loaded and saved files
+                and are stored in the project itself. Files can only be added
+                to this list by choosing the save option in the app itself.""");
+        Label savingHelp = new Label("""
+                To save a file, the user needs to select the save file at the
+                top of the app screen. The app needs to have a file loaded into
+                the app before it can save any rainfall data. This saved data is
+                stored in the project and can only be loaded in through the drop
+                down list on the right on the home screen.
+
+                This feature was included to prevent the user from having to
+                manually find a file each time they wanted to view the graph
+                in the visualiser. It is important to note that no saved data
+                will appear in the list until the app is closed and then
+                launched again.""");
+        Label visualiserHelp = new Label("""
+                The visualiser represents the currently loaded rainfall data
+                as a bar chart. The user can hover their cursor over the bar
+                of an entry and get its current value. This value includes the
+                date, whether it is a minimum, maximum or total value in
+                millimeters. A new file can be loaded into the chart from the
+                visualiser screen by making use of the menu bar at the top
+                of the screen. The bar chart will update itself on this screen.""");
+
+        Tab general = new Tab("General", generalHelp);
+        Tab load = new Tab("Loading", loadingHelp);
+        Tab save = new Tab("Saving", savingHelp);
+        Tab visualiser = new Tab("Visualiser", visualiserHelp);
+
+        helpPane.getTabs().addAll(general, load, save, visualiser);
+        Button close = new Button("Close Help");
+        close.setOnAction(e -> helpStage.hide());
+        VBox helpBox = new VBox(helpPane, close);
+        helpBox.setAlignment(Pos.CENTER);
+
+        Scene helpScene = new Scene(helpBox, 400, 300);
+        helpStage.setScene(helpScene);
+        helpStage.setTitle("Help for Rainfall Visualiser");
+        helpStage.setResizable(false);
+        helpStage.initStyle(StageStyle.UTILITY);
+
+        helpStage.focusedProperty().addListener( (obj,oldVal,newVal) -> {
+            if (!newVal) {
+                helpStage.hide();
+            }
+        });
+
+    } // end buildHelpStage()
 
     private MenuButton buildMenuButton() {
         MenuButton analysedList = new MenuButton();
@@ -190,6 +274,10 @@ public class Main extends Application {
 
         fileMenu.getItems().addAll(open, save, close);
 
+        MenuItem help = new MenuItem("Help");
+        help.setOnAction(e -> helpStage.show());
+        helpMenu.getItems().add(help);
+
         return menuBar;
     }
 
@@ -201,10 +289,9 @@ public class Main extends Application {
         try {
             rainfallData = rainfallAnalyser.analyseRainfallData(path);
             statusBar.setText(rainfallData.getFilename() + " successfully loaded");
-        } catch (IOException | IllegalArgumentException err) {
+        } catch (Exception err) {
             statusBar.setText("Failed to load " + file.getName() + "\n" +
-                    "Refer to the console for further details");
-            System.out.println(err.getMessage());
+                    err.getMessage());
         }
 
         return rainfallData;

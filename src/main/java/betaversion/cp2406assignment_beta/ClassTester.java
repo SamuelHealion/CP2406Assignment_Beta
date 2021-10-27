@@ -44,6 +44,9 @@ public class ClassTester {
         } catch (IllegalArgumentException err) {
             System.out.println("There was an issue parsing the rainfall data");
             System.out.println(err.getMessage());
+        } catch (Exception err) {
+            System.out.println("There was an issue");
+            System.out.println(err.getMessage());
         }
 
 //        for (MonthRainfallData monthData: testRainfallData.getRainfallData())

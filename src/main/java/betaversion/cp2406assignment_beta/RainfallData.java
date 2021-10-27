@@ -66,7 +66,7 @@ public class RainfallData {
     } // end getDateRange()
 
     /**
-     * Get the total recorded rainfall over the entire recorded rainfall.
+     * Get the maximum total recorded rainfall over the entire recorded data.
      */
     public double getMaxTotalRainfall() {
         double maxTotalRainfall = Double.NEGATIVE_INFINITY;
@@ -104,14 +104,18 @@ public class RainfallData {
         return maxRainfall;
     }
 
+    /**
+     * Assigns a filename to the RainfallData object.
+     */
     public void setFilename(String path) {
         File file = new File(path);
         String[] filenameElements = file.getName().trim().split("\\.");
         filename = filenameElements[0];
     }
 
-    public String getFilename() {
-        return filename;
-    }
+    /**
+     * Get the assigned filename for the RainfallData object.
+     */
+    public String getFilename() { return filename; }
 
 } // End RainfallData
