@@ -19,8 +19,11 @@ import java.util.Objects;
 
 /**
  * CP2406 Assignment - Samuel Healion
- * Beta version the assignment. Main Class to be run which uses the Rainfall Visualiser/Analyser classes.
+ * Beta version
+ * Main Class to be run which uses the Rainfall Visualiser/Analyser classes.
  * Creates an interactive app using JavaFX.
+ *
+ * See https://github.com/SamuelHealion/CP2406Assignment_Beta for the project repository
  */
 public class Main extends Application {
 
