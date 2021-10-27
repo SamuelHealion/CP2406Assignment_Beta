@@ -31,7 +31,6 @@ public class Main extends Application {
     private final Stage visualiserStage = new Stage();
     private final Stage helpStage = new Stage();
     private final Label statusBar = new Label();
-    private MenuButton analysedList = new MenuButton();
 
     /**
      * Main method that starts the application
@@ -92,14 +91,14 @@ public class Main extends Application {
         buttonBar.setAlignment(Pos.CENTER);
         buttonBar.setPrefHeight(50);
 
-        buildMenuButton();
+        MenuButton menuButton = buildMenuButton();
         MenuBar menuBar = buildMenuBar();
 
         // Set up the home root and scene
         BorderPane homeRoot = new BorderPane();
         homeRoot.setCenter(labelBar);
         homeRoot.setBottom(buttonBar);
-        homeRoot.setRight(analysedList);
+        homeRoot.setRight(menuButton);
         homeRoot.setTop(menuBar);
         homeRoot.setStyle("-fx-border-width: 2px; -fx-border-color: #444");
 
@@ -109,7 +108,8 @@ public class Main extends Application {
         homeStage.setTitle("CP2406 Assignment - Samuel Healion");
         homeStage.centerOnScreen();
         homeStage.setResizable(false);
-    }
+
+    } // end buildHomeStage()
 
     /**
      * Creates the Stage for the Rainfall Visualiser.
@@ -138,7 +138,7 @@ public class Main extends Application {
             visualiserStage.hide();
             homeStage.show();
         });
-    }
+    } // end buildVisualiserStage()
 
     /**
      * Builds the help stage. Used to give the user basic instructions
@@ -217,7 +217,7 @@ public class Main extends Application {
         helpStage.initStyle(StageStyle.UTILITY);
 
         // Closes the help screen when focus is lost from the home stage
-        helpStage.focusedProperty().addListener( (obj,oldVal,newVal) -> {
+        helpStage.focusedProperty().addListener( (observableValue,oldVal,newVal) -> {
             if (!newVal) {
                 helpStage.hide();
             }
@@ -228,7 +228,7 @@ public class Main extends Application {
      * Build the menu button for the home stage
      * Is used to load in previously saved and analysed Rainfall data files.
      */
-    private void buildMenuButton() {
+    private MenuButton buildMenuButton() {
         MenuButton menuButton = new MenuButton();
         menuButton.setText("Saved Rainfall Data");
         menuButton.setAlignment(Pos.CENTER);
@@ -254,8 +254,8 @@ public class Main extends Application {
                 menuButton.getItems().add(choice);
             }
         }
-        analysedList = menuButton;
-    } // end buildMenuButton
+        return menuButton;
+    } // end buildMenuButton()
 
     /**
      * Build the menu bar for the Home stage and the Visualiser Stage.
@@ -275,7 +275,7 @@ public class Main extends Application {
         MenuItem save = new MenuItem("Save");
         save.setOnAction(e -> {
             String filename = rainfallAnalyser.saveRainfallData(rainfallData);
-            buildMenuButton();
+            buildHomeStage();
             if (filename == null)
                 statusBar.setText("No file loaded to save");
             else
@@ -292,7 +292,7 @@ public class Main extends Application {
         helpMenu.getItems().add(help);
 
         return menuBar;
-    }
+    } // end buildMenuBar()
 
     /**
      * Opens up a file explorer menu and lets the user load in a csv rainfall file
@@ -304,6 +304,11 @@ public class Main extends Application {
     private RainfallData loadRainfallData() {
         FileChooser chooser = new FileChooser();
         File file = chooser.showOpenDialog(homeStage);
+        // Check that the file chooser successfully loaded a file
+        if (file == null) {
+            statusBar.setText("No file loaded");
+            return null;
+        }
         String path = file.getAbsolutePath();
 
         try {
