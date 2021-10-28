@@ -3,6 +3,7 @@ package betaversion.cp2406assignment_beta;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
+import javafx.geometry.Side;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
@@ -121,9 +122,14 @@ public class Main extends Application {
     private void buildVisualiserStage() {
         BorderPane visualiserRoot = new BorderPane(RainfallVisualiser.getRainfallBarChart(rainfallData));
         Button returnButton = new Button("Close Visualiser");
+//        returnButton.setAlignment(Pos.CENTER);
 
-        HBox visualiserHBox = new HBox(returnButton);
+        MenuButton menuButton = buildMenuButton();
+        menuButton.setPopupSide(Side.TOP);
+
+        HBox visualiserHBox = new HBox(100, returnButton, menuButton);
         visualiserHBox.setAlignment(Pos.CENTER);
+        visualiserHBox.setPrefHeight(30);
 
         MenuBar menuBar = buildMenuBar();
 
@@ -279,6 +285,7 @@ public class Main extends Application {
         save.setOnAction(e -> {
             String filename = rainfallAnalyser.saveRainfallData(rainfallData);
             buildHomeStage();
+            buildVisualiserStage();
             if (filename == null)
                 statusBar.setText("No file loaded to save");
             else
